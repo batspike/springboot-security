@@ -4,10 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ProjectConfig extends WebSecurityConfigurerAdapter {
@@ -20,7 +18,7 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 		
-		http.formLogin().and().httpBasic()
+		http.formLogin().and().httpBasic() //httpBasic needed to support Postman 'Basic Auth' login
 			.and()
 			.authorizeRequests().mvcMatchers("/").permitAll()
 			.and()
@@ -34,20 +32,8 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public UserDetailsManager manager() {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		
-		UserDetails user;
-		user = User.withDefaultPasswordEncoder().username("user").password("user").roles("USER").build();//use .roles for auto preappend ROLE_
-		manager.createUser(user);
-		user = User.withDefaultPasswordEncoder().username("admin").password("admin").roles("ADMIN").build();
-		manager.createUser(user);
-		user = User.withDefaultPasswordEncoder().username("cust").password("cust").roles("CUSTOMER").build();
-		manager.createUser(user);
-		
-		return manager;
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
 	}
-	
-	
 
 }
