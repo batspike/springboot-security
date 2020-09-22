@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,10 @@ import com.samcancode.security.SecurityUser;
 public class JpaUserDetailsManager implements UserDetailsManager {
 	
 	private UserRepository userRepo;
-	public JpaUserDetailsManager(UserRepository userRepo) {
+	private PasswordEncoder passwordEncoder;
+	public JpaUserDetailsManager(UserRepository userRepo, PasswordEncoder passwordEncoder) {
 		this.userRepo = userRepo;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 	public void createUser(UserDetails user) {
 		User u = new User();
 		u.setUsername(user.getUsername());
-		u.setPassword(user.getPassword());
+		u.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepo.save(u);
 	}
 
