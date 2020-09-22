@@ -2,7 +2,6 @@ package com.samcancode.services;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,9 +11,9 @@ import com.samcancode.domain.User;
 import com.samcancode.repository.UserRepository;
 import com.samcancode.security.SecurityUser;
 
-@Service
+//@Service
 public class JpaUserDetailsService implements UserDetailsService {
-	@Autowired
+
 	private UserRepository userRepo;
 	public JpaUserDetailsService(UserRepository userRepo) {
 		this.userRepo = userRepo;
