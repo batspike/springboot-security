@@ -3,18 +3,34 @@ package com.samcancode.security;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import com.samcancode.domain.User;
-
+@Entity
+@Data
+@NoArgsConstructor
 public class SecurityUser implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
-	private final User user;
-	public SecurityUser(User user) {
-		this.user = user;
-	}
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+	private String username;
+	private String password;
+	private String fullname;
+	private String email;
+	private String phoneNumber;
+	private Boolean accountExpired = false;
+	private Boolean accountLocked = false;
+	private Boolean credentialsExpired = false;
+	private Boolean accountEnabled = true;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -22,35 +38,25 @@ public class SecurityUser implements UserDetails {
 			() -> "ROLE_USER", () -> "ROLE_ADMIN", () -> "ROLE_CUSTOMER"
 		);
 	}
-
-	@Override
-	public String getPassword() {
-		return user.getPassword();
-	}
-
-	@Override
-	public String getUsername() {
-		return user.getUsername();
-	}
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return !getAccountExpired();
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return !getAccountLocked();
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return true;
+		return !getCredentialsExpired();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return getAccountEnabled();
 	}
 
 }

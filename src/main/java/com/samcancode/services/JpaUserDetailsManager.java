@@ -8,33 +8,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
-import com.samcancode.domain.User;
-import com.samcancode.repository.UserRepository;
+import com.samcancode.repository.SecurityUserRepository;
 import com.samcancode.security.SecurityUser;
 
 @Service
 public class JpaUserDetailsManager implements UserDetailsManager {
 	
-	private UserRepository userRepo;
+	private SecurityUserRepository userRepo;
 	private PasswordEncoder passwordEncoder;
-	public JpaUserDetailsManager(UserRepository userRepo, PasswordEncoder passwordEncoder) {
+	public JpaUserDetailsManager(SecurityUserRepository userRepo, PasswordEncoder encoder) {
 		this.userRepo = userRepo;
-		this.passwordEncoder = passwordEncoder;
+		this.passwordEncoder = encoder;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = userRepo.findUserByUsername(username);
-		User u = user.orElseThrow(() -> new UsernameNotFoundException(username));
-		return new SecurityUser(u);
+		Optional<SecurityUser> user = userRepo.findUserByUsername(username);
+		SecurityUser u = user.orElseThrow(() -> new UsernameNotFoundException(username));
+		return u;
 	}
 
 	@Override
 	public void createUser(UserDetails user) {
-		User u = new User();
-		u.setUsername(user.getUsername());
+		SecurityUser u = (SecurityUser) user;
 		u.setPassword(passwordEncoder.encode(user.getPassword()));
-		userRepo.save(u);
+		userRepo.save((SecurityUser)user);
 	}
 
 	@Override
@@ -44,8 +42,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 
 	@Override
 	public void deleteUser(String username) {
-		Optional<User> user = userRepo.findUserByUsername(username);
-		User u = user.orElseThrow(() -> new UsernameNotFoundException(username));
+		Optional<SecurityUser> user = userRepo.findUserByUsername(username);
+		SecurityUser u = user.orElseThrow(() -> new UsernameNotFoundException(username));
 		userRepo.delete(u);
 	}
 
@@ -56,7 +54,7 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 
 	@Override
 	public boolean userExists(String username) {
-		Optional<User> user = userRepo.findUserByUsername(username);
+		Optional<SecurityUser> user = userRepo.findUserByUsername(username);
 		return user.isPresent();
 	}
 

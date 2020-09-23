@@ -1,10 +1,8 @@
 package com.samcancode.bootstrap;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.samcancode.domain.User;
 import com.samcancode.security.SecurityUser;
 import com.samcancode.services.JpaUserDetailsManager;
 
@@ -19,22 +17,21 @@ public class PopulateUsers implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		User user = new User();
-
+		
+		SecurityUser user = new SecurityUser();
 		user.setUsername("user");
 		user.setPassword("user");
-		UserDetails u = new SecurityUser(user);
-		userManager.createUser(u);
+		userManager.createUser(user);
 		
-		user.setUsername("admin");
-		user.setPassword("admin");
-		UserDetails a = new SecurityUser(user);
-		userManager.createUser(a);
+		SecurityUser admin = new SecurityUser();
+		admin.setUsername("admin");
+		admin.setPassword("admin");
+		userManager.createUser(admin);
 		
-		user.setUsername("cust");
-		user.setPassword("cust");
-		UserDetails c = new SecurityUser(user);
-		userManager.createUser(c);
+		SecurityUser cust = new SecurityUser();
+		cust.setUsername("cust");
+		cust.setPassword("cust");
+		userManager.createUser(cust);
 		
 	}
 	
