@@ -14,11 +14,13 @@ import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Service;
 
 import com.samcancode.security.domain.JpaAuthority;
 import com.samcancode.security.domain.JpaSecurityUser;
 import com.samcancode.security.repository.JpaSecurityUserRepository;
 
+@Service
 public class JpaUserDetailsManager implements UserDetailsManager, UserDetailsPasswordService {
 	@Autowired
 	private JpaSecurityUserRepository userRepo;
