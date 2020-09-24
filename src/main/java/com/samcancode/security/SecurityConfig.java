@@ -4,13 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 @Configuration
-public class ProjectConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -35,19 +34,12 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public UserDetailsManager manager() {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		
-		UserDetails user;
-		user = User.withDefaultPasswordEncoder().username("user").password("user").roles("USER").build();//use .roles for auto preappend ROLE_
-		manager.createUser(user);
-		user = User.withDefaultPasswordEncoder().username("admin").password("admin").roles("ADMIN").build();
-		manager.createUser(user);
-		user = User.withDefaultPasswordEncoder().username("cust").password("cust").roles("CUSTOMER").build();
-		manager.createUser(user);
-		
-		return manager;
+		return new JpaUserDetailsManager();
 	}
 	
-	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 }

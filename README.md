@@ -6,3 +6,10 @@ This project consists of a bare bone Spring Boot MVC Web application with some w
 - http://localhost:8080/admin
 - http://localhost:8080/customer
 
+Login with user:user , admin:admin , or cust:cust
+
+#### Changes Applied
+1. Use JPA with H2 Database
+2. Created custom JpaAuthority to persist authority
+3. Created custom JpaSecurityUser to store user data
+4. Created custom JpaUserDetailsManager to manage authority and user
