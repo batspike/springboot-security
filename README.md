@@ -12,4 +12,4 @@ Login with user:user , admin:admin , or cust:cust
 1. Use JPA with H2 Database
 2. Created custom JpaAuthority to persist authority
 3. Created custom JpaSecurityUser to store user data
-4. Created custom JpaUserDetailsManager to manage authority and user
+4. Replace custom JpaUserDetailsManager with JpaUserDetailsService for minimal codes authentication/authorization
