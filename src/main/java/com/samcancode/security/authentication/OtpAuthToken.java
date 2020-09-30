@@ -7,17 +7,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
-
+public class OtpAuthToken extends UsernamePasswordAuthenticationToken {
 	private static final long serialVersionUID = 1L;
 
-	public CustomAuthenticationToken() { super(null,null); }
-
-	public CustomAuthenticationToken(Object principal, Object credentials) {
+	public OtpAuthToken() {super(null,null);}
+	
+	public OtpAuthToken(Object principal, Object credentials) {
 		super(principal, credentials);
 	}
 	
-	public CustomAuthenticationToken(Object principal, Object credentials,
+	public OtpAuthToken(Object principal, Object credentials,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(principal, credentials, authorities);
 	}

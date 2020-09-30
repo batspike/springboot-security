@@ -8,13 +8,16 @@ This project consists of a bare bone Spring Boot MVC Web application with some w
 
 Login with user:user , admin:admin , or cust:cust
 
-#### Changes Applied
+#### Changes Applied - MultipleAuthProviders branch
+This demonstrate a introduction of usage of Multiple Authentication Providers, using username/password authentication follow by token authentication. This effectively shows the basic innerworking of dual authentication. After the username/password authentication is successful, a token is issued. User login with username/token for second authentication. Two authentication providers are created.
 1. Use JPA with H2 Database
-2. Created custom filter CustomAuthenticationFilter.java to be used as authentication filter.
-3. Created custom token class CustomAuthenticationToken.java as the authentication token.
-4. Created custom provider class CustomAuthenticationProvider.java to be assigned to authentication manager.
+2. Created custom filter UsernamePasswordAuthFilter.java to be used as authentication filter (replacing default BasicAuthenticationFilter filter).
+3. Created custom token classes UsernamePasswordAuthToken.java and OtpAuthToken.java as the authentication tokens.
+4. Created custom provider classes UsernamePasswordAuthProvider.java and OtpAuthProvider.java to be assigned to authentication manager in the config setup.
 5. Setup all the above components in SecurityConfig.java.
-6. Use Postman to send a header attribute "Authentication" with value to match the key in application.properties.
+6. On first round of username/password successful authentication, a token is created for the user.
+7. On second round of username/token successful authentication, a 'Authorization' header attribute is set in the response header.
+8. Use Postman to send a header attributes "username/password" attributes in header to endpoint, http://localhost:8080/login.
+9. Use Postman to send a header attributes "username/token" attributes in header to endpoint, http://localhost:8080/login, for second authentication.
+10. Check in Postman response header should contain a attribute 'Authentication' containing generated UUID from app.
 
-
-This is a bare basic setup to demonstrate the flow of authentication from filter to authentication manager to authentication provider. Upon successful authentication, the token is sent back to the filter which will set the Security Context.
