@@ -15,9 +15,10 @@ This demonstrate a introduction of usage of Multiple Authentication Providers, u
 3. Created custom token classes UsernamePasswordAuthToken.java and OtpAuthToken.java as the authentication tokens.
 4. Created custom provider classes UsernamePasswordAuthProvider.java and OtpAuthProvider.java to be assigned to authentication manager in the config setup.
 5. Setup all the above components in SecurityConfig.java.
-6. On first round of username/password successful authentication, a token is created for the user.
-7. On second round of username/token successful authentication, a 'Authorization' header attribute is set in the response header.
+6. On first round of username/password successful authentication, a OTP token is created for the user.
+7. On second round of username/otp-token successful authentication, a 'Authorization' header attribute is set in the response header.
 8. Use Postman to send a header attributes "username/password" attributes in header to endpoint, http://localhost:8080/login.
-9. Use Postman to send a header attributes "username/token" attributes in header to endpoint, http://localhost:8080/login, for second authentication.
-10. Check in Postman response header should contain a attribute 'Authentication' containing generated UUID from app.
+9. Use Postman to send a header attributes "username/otp" attributes in header to endpoint, http://localhost:8080/login, for second OTP authentication.
+10. Check in Postman response header should contain a attribute 'Authentication' containing generated UUID token from app.
+11. With Postman, set in the request header attribute 'Authentication' with the UUID token received previously, and sent request to end-point, http://localhost:8080/user. App should return the user page successfully.
 

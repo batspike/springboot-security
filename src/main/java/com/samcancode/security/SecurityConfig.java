@@ -1,44 +1,50 @@
 package com.samcancode.security;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import com.samcancode.security.filters.TokenAuthFilter;
 import com.samcancode.security.filters.UsernamePasswordAuthFilter;
 import com.samcancode.security.providers.OtpAuthProvider;
+import com.samcancode.security.providers.TokenAuthProvider;
 import com.samcancode.security.providers.UsernamePasswordAuthProvider;
 
 @Configuration
-@EnableWebSecurity
+@EnableAsync
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private UsernamePasswordAuthFilter authFilter;
-	
 	@Autowired
 	private UsernamePasswordAuthProvider usernamePasswordAuthProvider;
 	
 	@Autowired
 	private OtpAuthProvider otpAuthProvider;
 	
+	@Autowired
+	private TokenAuthProvider tokenAuthProvider;
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(usernamePasswordAuthProvider)
-			.authenticationProvider(otpAuthProvider);
+			.authenticationProvider(otpAuthProvider)
+			.authenticationProvider(tokenAuthProvider);
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.addFilterAt(authFilter, BasicAuthenticationFilter.class); //replace the BasicAuthenticationFilter with our UsernamePasswordAuthFilter
+		http.addFilterAt(authFilter(), BasicAuthenticationFilter.class)
+			.addFilterAfter(tokenAuthFilter(), BasicAuthenticationFilter.class);
 		
 		http.csrf().disable() //this config is needed to access /h2-console properly
 			.headers().frameOptions().sameOrigin()
@@ -58,7 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.and()
 //			.authorizeRequests().anyRequest().authenticated();
 	}
+	
+	@Bean
+	public TokenAuthFilter tokenAuthFilter() {
+		return new TokenAuthFilter();
+	}
 
+	@Bean
+	public UsernamePasswordAuthFilter authFilter() {
+		return new UsernamePasswordAuthFilter();
+	}
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -70,6 +86,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 	
-	
+	@Bean
+	public InitializingBean initializingBean() {
+		return () -> {
+			SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+		};
+	}
 	
 }
