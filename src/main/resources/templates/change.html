@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Home Page</title>
+</head>
+<body>
+    <h1>Home Page</h1>
+    <form action="http://localhost:8080/change" method="post">
+        <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
+        <button type="submit">CLICK ME</button>
+    </form>
+</body>
+</html>

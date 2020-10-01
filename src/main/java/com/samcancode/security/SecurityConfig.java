@@ -7,6 +7,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.csrf.CsrfFilter;
+
+import com.samcancode.security.filters.CsrfTokenLoggerFilter;
+import com.samcancode.security.repository.CustomCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -14,14 +18,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.csrf().disable() //this config is needed to access /h2-console properly
-			.headers().frameOptions().sameOrigin()
+		//this config is needed to access /h2-console properly
+		http.headers().frameOptions().sameOrigin()
 			.and()
-			.authorizeRequests().antMatchers("/h2-console/**").permitAll();
+			.csrf().ignoringAntMatchers("/h2-console/**"); //disable csrf for h2-console
 		
 		http.formLogin().and().httpBasic()
 			.and()
-			.authorizeRequests().mvcMatchers("/").permitAll()
+			.authorizeRequests().mvcMatchers("/","/h2-console/**","/change").permitAll()
 			.and()
 			.authorizeRequests().mvcMatchers("/user").hasAnyRole("USER","ADMIN")
 			.and()
@@ -29,7 +33,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests().mvcMatchers("/customer").hasAnyRole("CUSTOMER","ADMIN")
 			.and()
-			.authorizeRequests().anyRequest().authenticated();
+			.authorizeRequests().anyRequest().authenticated()
+			.and()
+			.csrf().csrfTokenRepository(new CustomCsrfTokenRepository()); //using our custom csrf token supplier
+		
+		http.addFilterAfter( new CsrfTokenLoggerFilter(), CsrfFilter.class); //added new csrf filter
 	}
 
 	@Bean
