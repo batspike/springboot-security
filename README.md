@@ -8,8 +8,7 @@ This project consists of a bare bone Spring Boot MVC Web application with some w
 
 Login with user:user , admin:admin , or cust:cust
 
-#### Changes Applied
-1. Use JPA with H2 Database
-2. Created custom JpaAuthority to persist authority
-3. Created custom JpaSecurityUser to store user data
-4. Created custom JpaUserDetailsManager to manage authority and user
+#### Changes Applied for CORS
+1. Created main.html to demonstrate how CORS prevent source from other origins
+2. Added a Get and Post methods in Controller to service main.html
+3. Updated SecurityConfig to demo how CORS is configured

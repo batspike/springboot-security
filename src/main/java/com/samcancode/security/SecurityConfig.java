@@ -1,5 +1,7 @@
 package com.samcancode.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -19,17 +23,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 		
-		http.formLogin().and().httpBasic()
-			.and()
-			.authorizeRequests().mvcMatchers("/").permitAll()
-			.and()
-			.authorizeRequests().mvcMatchers("/user").hasAnyRole("USER","ADMIN")
-			.and()
-			.authorizeRequests().mvcMatchers("/admin").hasAnyRole("ADMIN")
-			.and()
-			.authorizeRequests().mvcMatchers("/customer").hasAnyRole("CUSTOMER","ADMIN")
-			.and()
-			.authorizeRequests().anyRequest().authenticated();
+		http.authorizeRequests().anyRequest().permitAll();
+		
+		// the following setup CORS allowing all origins for Get and Post methods
+		http.cors(c -> {
+			CorsConfigurationSource cs = r -> {
+				CorsConfiguration cc = new CorsConfiguration();
+				cc.setAllowedOrigins(List.of("*"));
+				cc.setAllowedMethods(List.of("GET","POST"));
+				return cc;
+			};
+			c.configurationSource(cs);
+		});
+		
+//		http.formLogin().and().httpBasic()
+//			.and()
+//			.authorizeRequests().mvcMatchers("/").permitAll()
+//			.and()
+//			.authorizeRequests().mvcMatchers("/user").hasAnyRole("USER","ADMIN")
+//			.and()
+//			.authorizeRequests().mvcMatchers("/admin").hasAnyRole("ADMIN")
+//			.and()
+//			.authorizeRequests().mvcMatchers("/customer").hasAnyRole("CUSTOMER","ADMIN")
+//			.and()
+//			.authorizeRequests().anyRequest().authenticated();
 	}
 
 	@Bean
