@@ -10,12 +10,18 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 
+import com.samcancode.security.JpaUserDetailsService;
+
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableAuthorizationServer
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JpaUserDetailsService jpaUserDetailsService;
 	
 	// The following are Grant Types:
 	// 	password - this is being deprecated
@@ -47,6 +53,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		endpoints.authenticationManager(authenticationManager);
+		endpoints.userDetailsService(jpaUserDetailsService); //needed for refreshing a token
 	}
 
 	@Override

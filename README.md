@@ -51,6 +51,15 @@ Another way is to have a common token storage location, though this is not recom
 
 Yet another setup is to have both the Authorization and Resource Servers to be same application. This is also not recommended. We do this by creating the ResourceServerConfig.java configuration. To get to any resource will be a two step process. 1. Get a token as per before; 2. Call the resource specifying header attribute Authorization=Bearer 8c9658c0-b26b-4486-8e18-e57f3efda979.
 
+<p>
+How to use a refresh token:
+1. Send a POST method to http://localhost:8080/oauth/token?grant_type=password&username=user&password=user&scope=read
+Note we also need to do Basic Auth with Username/Password, client1/secret1 as per usual.
+2. The auth server should return a accss_token and refresh_token in the Json message. Copy the refresh token for use later.
+3. The purpose of the refresh token is to allow us to request a new access token from auth server without having to go thru the whole request cycle.
+4. To get a new access token, perform another POST http://localhost:8080/oauth/token?grant_type=refresh_token&scope=read&refresh_token=c276a162-f3c9-43ff-87e9-4f83cfd038cc
+Note the use of refresh token in the parameter (copied in previous step), the grant type is also specified as refresh token.
+5. The auth server should return with a new access token in the Json message.
 
 
 
